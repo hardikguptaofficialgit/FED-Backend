@@ -15,4 +15,7 @@ router.use('/user', require('./user/userRoutes'));
 // Event routes 
 router.use('/form', require('./forms/formRoutes'));
 
+//Blog Routes
+router.use('/blog', require('./blog/blogRoutes'));
+
 module.exports = router; // Ensure you are exporting the router

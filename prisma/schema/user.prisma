@@ -50,5 +50,10 @@ model user {
   editProfileCount Int?               @default(5)
   userForms        formRegistration[]
 
+  blogs     Blog[]           @relation("UserBlogs")
+  approvals BlogApproval[]   @relation("UserApprovals")
+  reactions BlogReaction[] @relation("UserReactions")
+  comments  BlogComment[]    @relation("UserComments")
+
   @@map("userdb")
 }

@@ -1,0 +1,44 @@
+model Blog {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String
+  author    user             @relation(fields: [authorId], references: [id], name: "UserBlogs")
+  authorId  String
+  status    String           @default("pending") // pending, approved, rejected
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  approvals BlogApproval[]
+  reactions BlogReaction[]
+  comments  BlogComment[]
+}
+
+model BlogApproval {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  blog       Blog     @relation(fields: [blogId], references: [id])
+  blogId     String
+  approvedBy user     @relation(fields: [approverId], references: [id], name: "UserApprovals")
+  approverId String
+  status     String // approved, rejected
+  createdAt  DateTime @default(now())
+}
+
+model BlogReaction {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  blogId    String
+  user      user     @relation(fields: [userId], references: [id], name: "UserReactions")
+  userId    String
+  reaction  String   // like, dislike
+  createdAt DateTime  @default(now())
+}
+
+model BlogComment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  blogId    String
+  user      user     @relation(fields: [userId], references: [id], name: "UserComments")
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+}
+
