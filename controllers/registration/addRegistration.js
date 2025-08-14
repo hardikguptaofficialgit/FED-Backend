@@ -62,6 +62,7 @@ const validateCurrentForm = expressAsyncHandler(
 
 const addRegistration = expressAsyncHandler(async (req, res, next) => {
   console.log("Entering add", req.body);
+  console.log("User Info", req.user);
   console.log(req.body);
 
   const { _id } = req.body;
@@ -133,7 +134,7 @@ const addRegistration = expressAsyncHandler(async (req, res, next) => {
     let regTeamMemEmails = [];
     // console.log("Team Name :", teamName)
     // console.log("Team Code : ", teamCode)
-    console.log("setions : ", sections);
+    // console.log("setions : ", sections);
 
     const sectionsObject = {
       user_name: req.user.name,
@@ -144,11 +145,10 @@ const addRegistration = expressAsyncHandler(async (req, res, next) => {
       sections: sections,
     };
     console.log("sections Object : ", sectionsObject);
-
+ console.log(relatedEventForm);
     if (info.participationType !== "Individual") {
-      console.log("related", relatedEventForm.info.eventTitle);
-      console.log("eventTitle", info.eventTitle);
-      console.log("count", form.formAnalytics[0]?.regUserEmails.length);
+     
+    
       teamCode = await generateTeamCode(
         relatedEventForm?.info.eventTitle,
         info.eventTitle,
@@ -309,8 +309,9 @@ const addRegistration = expressAsyncHandler(async (req, res, next) => {
         },
       });
 
-      // const updatedUser = await updateUser({ email: req.user.email }, { regForm: _id });
 
+      
+      // const updatedUser = await updateUser({ email: req.user.email }, { regForm: _id });
       // console.log("related", relatedEventForm.info.eventTitle)
       // console.log("eventTitle", info.eventTitle)
       // console.log("count", form.formAnalytics[0]?.regUserEmails.length);
@@ -343,7 +344,7 @@ const addRegistration = expressAsyncHandler(async (req, res, next) => {
           },
         });
 
-      return { registration, updatedUser, updateFormRegistrationList };
+      return { registration,updateFormRegistrationList };
     });
 
     console.log(transaction.updatedUser);
