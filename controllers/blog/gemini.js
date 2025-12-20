@@ -18,7 +18,7 @@ const getSummary = async (req, res) => {
   console.log("🔹 Prompt sent to Gemini (/summary):", prompt);
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     const result = await model.generateContent(prompt);
     const text = await result.response.text();
     console.log("✅ Gemini /summary response:", text);
@@ -133,7 +133,7 @@ ${blogText}
 
     console.log("🟢 Prompt sent to Gemini (/autofill):", prompt.slice(0, 300) + "...");
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     const result = await model.generateContent(prompt);
     const responseText = await result.response.text();
     console.log("✅ Gemini /autofill response:", responseText);

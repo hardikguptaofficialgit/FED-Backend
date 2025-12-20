@@ -21,4 +21,7 @@ router.use('/blog', require('./blog'));
 
 router.use('/gemini', require('./blog/ai/gemini'));
 
+// Chatbot Routes
+router.use('/chatbot', require('./chatbot'));
+
 module.exports = router; // Ensure you are exporting the router
