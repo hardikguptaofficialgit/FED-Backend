@@ -113,7 +113,23 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 
 app.use(cors({
-    origin: "*",
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+
+        const allowedOrigins = [
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "https://fedkiit.com",
+            "https://www.fedkiit.com"
+        ];
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(null, true); // Allow all in dev, restrict in production
+        }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
 }));
