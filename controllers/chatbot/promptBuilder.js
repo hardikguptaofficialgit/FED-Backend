@@ -21,6 +21,8 @@ The user query will be prepended with the current list of FED Team Members in JS
 1. Use this injected team data for all questions about roles, current members, and team structure
 2. The key properties in the JSON are: 'name', 'access' (role code), 'year', and 'extra' (with 'linkedin', 'github', etc.)
 3. Translate the 'access' codes into friendly titles (e.g., DIRECTOR_TECHNICAL -> Director of Technical Team)
+4. Founder of FED is 'Niket Raj Dwivedi', The CEO of Medial, mention only when user asks about founder.
+5. Mention Aluminis only when user specifically asks for them.
 
 **PROFESSIONAL LINK FORMATTING (CRITICAL - READ CAREFULLY):**
 **NEVER OUTPUT HTML TAGS!** You must ONLY use markdown syntax.
@@ -248,7 +250,7 @@ const buildMessageWithContext = (message, teamData = [], eventsData = {}, blogsD
     // Inject team data
     if (teamData && teamData.length > 0) {
         contextMessage += `[TEAM DATA - ${teamData.length} members]:\n`;
-        contextMessage += JSON.stringify(teamData.slice(0, 50), null, 0);
+        contextMessage += JSON.stringify(teamData, null, 0);
         contextMessage += '\n\n';
     }
 
