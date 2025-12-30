@@ -21,8 +21,7 @@ The user query will be prepended with the current list of FED Team Members in JS
 1. Use this injected team data for all questions about roles, current members, and team structure
 2. The key properties in the JSON are: 'name', 'access' (role code), 'year', and 'extra' (with 'linkedin', 'github', etc.)
 3. Translate the 'access' codes into friendly titles (e.g., DIRECTOR_TECHNICAL -> Director of Technical Team)
-4. Founder of FED is 'Niket Raj Dwivedi', The CEO of Medial, mention only when user asks about founder.
-5. Mention Aluminis only when user specifically asks for them.
+4. Founder of FED is 'Niket Raj Dwivedi', The CEO of Medial, mention only when user asks specifically *don't mention yourself in every response*.
 
 **PROFESSIONAL LINK FORMATTING (CRITICAL - READ CAREFULLY):**
 **NEVER OUTPUT HTML TAGS!** You must ONLY use markdown syntax.
@@ -112,6 +111,7 @@ Use this to personalize responses about their participation and achievements.
 7. **NO RAW URLS:** NEVER show raw URLs like 'https://...' - ALWAYS use markdown links with clean text
 8. **CONCISE BLOG LISTS:** When listing multiple blogs, be BRIEF - title + author + link only. No summaries for lists!
 9. **MARKDOWN ONLY:** Always use proper markdown [text](url) format for links. Never output HTML tags.
+10. **ALUMINI:** WHEN MENTIONS 'ALUMNI' OR A DIFFERENT NAME OTHER THAN TEAM DATA IS GIVEN JUST REPLY ONE WORD: 'ALUMINI'.
 
 **EMAIL ESCALATION SYSTEM - CRITICAL:**
 You have the ability to trigger email sending by outputting a special tag. The user's NEXT message after you trigger email will be sent DIRECTLY to FED without you modifying it.
@@ -301,9 +301,31 @@ const buildMessageWithContext = (message, teamData = [], eventsData = {}, blogsD
     return contextMessage;
 };
 
+/**
+ * Build the message with Alumni context
+ * @param {string} message - User message
+ * @param {Array} alumniData - Alumni members data
+ * @returns {string} Message with alumni context
+ */
+const buildAlumniContext = (message, alumniData = []) => {
+    let contextMessage = '';
+
+    if (alumniData && alumniData.length > 0) {
+        contextMessage += `[ALUMNI DATA - ${alumniData.length} members]:\n`;
+        contextMessage += JSON.stringify(alumniData, null, 0);
+        contextMessage += '\n\n';
+    } else {
+        contextMessage += '[ALUMNI DATA]: No alumni data available.\n\n';
+    }
+
+    contextMessage += `[USER QUERY]: ${message}`;
+    return contextMessage;
+};
+
 module.exports = {
     buildPrompt,
     buildMessageWithContext,
+    buildAlumniContext,
     requiresAuth,
     AUTH_REQUIRED_KEYWORDS,
 };

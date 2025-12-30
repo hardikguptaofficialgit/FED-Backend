@@ -7,7 +7,7 @@
 const { PrismaClient, AccessTypes } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { generateResponse, checkHealth } = require('./geminiService');
-const { buildPrompt, buildMessageWithContext, requiresAuth } = require('./promptBuilder');
+const { buildPrompt, buildMessageWithContext, buildAlumniContext, requiresAuth } = require('./promptBuilder');
 
 /**
  * Fetch team members from database
@@ -18,7 +18,7 @@ const fetchTeamData = async () => {
         const users = await prisma.user.findMany({
             where: {
                 access: {
-                    notIn: [AccessTypes.USER, AccessTypes.ADMIN]
+                    notIn: [AccessTypes.USER, AccessTypes.ADMIN, AccessTypes.ALUMNI]
                 }
             },
             select: {
@@ -32,6 +32,31 @@ const fetchTeamData = async () => {
         return users;
     } catch (error) {
         console.error('[Chatbot Controller] Error fetching team:', error);
+        return [];
+    }
+};
+
+/**
+ * Fetch alumni team members from database
+ * @returns {Promise<Array>} Alumni data
+ */
+const fetchAlumniData = async () => {
+    try {
+        const alumni = await prisma.user.findMany({
+            where: {
+                access: AccessTypes.ALUMNI
+            },
+            select: {
+                id: true,
+                name: true,
+                access: true,
+                img: true,
+                extra: true
+            }
+        });
+        return alumni;
+    } catch (error) {
+        console.error('[Chatbot Controller] Error fetching alumni:', error);
         return [];
     }
 };
@@ -272,7 +297,29 @@ const processMessage = async (req, res) => {
         const userMessage = buildMessageWithContext(message, teamData, eventsData, blogsData, userData);
 
         // Generate AI response
-        const aiResponse = await generateResponse(systemPrompt, userMessage, conversationHistory);
+        let aiResponse = await generateResponse(systemPrompt, userMessage, conversationHistory);
+
+        // Check for ALUMNI intent
+        if (aiResponse && aiResponse.trim() === 'ALUMINI') {
+            console.log('[Chatbot] Detected ALUMNI intent. Fetching alumni data...');
+
+            const alumniData = await fetchAlumniData();
+            console.log(`[Chatbot] Fetched ${alumniData.length} alumni members`);
+
+            // Re-build system prompt specifically for Alumni query
+            // We can reuse the base prompt but maybe slightly modified context is enough
+            const alumniSystemPrompt = systemPrompt + `\n\n**CONTEXT UPDATE:** User is asking about ALUMNI. Use the provided Alumni Data to answer.
+            If the user is asking about a specific alumni member, provide their details from the Alumni Data. If the alumni member is not found, respond politely indicating so.
+            Add [NAV:/alumni] at the END of your response`;
+
+            // Build new user message with ONLY alumni data (to save context window)
+            const alumniUserMessage = buildAlumniContext(message, alumniData);
+
+            // Re-query AI with new context
+            aiResponse = await generateResponse(alumniSystemPrompt, alumniUserMessage, conversationHistory);
+
+            console.log('[Chatbot] Generated Secondary Response for Alumni query');
+        }
 
         console.log(`[Chatbot] Response generated successfully`);
 

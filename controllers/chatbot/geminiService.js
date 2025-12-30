@@ -13,7 +13,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
  */
 const loadApiKeys = () => {
     const keys = [];
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 10; i++) {
         const key = process.env[`GEMINI_API_KEY_${i}`];
         if (key && !key.includes('YOUR_API_KEY') && key.length > 10) {
             keys.push(key);
