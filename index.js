@@ -107,18 +107,29 @@ const PORT = process.env.PORT || 3000;
 
 const frontendUrl = process.env.DOMAIN;
 console.log("Frontend URL:", frontendUrl);
+
+const allowedOrigins = [
+  "https://www.fedkiit.com",
+  "https://fedkiit.com",
+  "http://localhost:5173",
+  "http://localhost:3000"
+];
+
 // Middlewares
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow all origins - return true to allow any origin with credentials
-        callback(null, true);
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, origin);
+    }
+    callback(null, false);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 }));
 app.options('*', cors()); // handle preflight requests
 
