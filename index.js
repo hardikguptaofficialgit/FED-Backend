@@ -114,8 +114,8 @@ app.use(cookieParser());
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow all origins by returning the requesting origin
-        callback(null, origin || '*');
+        // Allow all origins - return true to allow any origin with credentials
+        callback(null, true);
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
