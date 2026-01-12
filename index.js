@@ -114,22 +114,8 @@ app.use(cookieParser());
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl)
-        if (!origin) return callback(null, true);
-
-        const allowedOrigins = [
-            "http://localhost:5173",
-            "http://localhost:3000",
-            "https://fedkiit.com",
-            "https://www.fedkiit.com",
-            "https://awsapi2.fedkiit.com"
-        ];
-
-        if (allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
+        // Allow all origins by returning the requesting origin
+        callback(null, origin || '*');
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
