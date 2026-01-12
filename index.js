@@ -121,13 +121,14 @@ app.use(cors({
             "http://localhost:5173",
             "http://localhost:3000",
             "https://fedkiit.com",
-            "https://www.fedkiit.com"
+            "https://www.fedkiit.com",
+            "https://awsapi2.fedkiit.com"
         ];
 
         if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(null, true); // Allow all in dev, restrict in production
+            callback(new Error('Not allowed by CORS'));
         }
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
