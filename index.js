@@ -115,23 +115,30 @@ const allowedOrigins = [
   "http://localhost:3000"
 ];
 
-// Middlewares
-app.use(express.json({ limit: '16kb' }));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-app.use(cookieParser());
-
-app.use(cors({
+// Shared CORS options for both normal and preflight requests
+const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
-      return callback(null, origin);
+      return callback(null, true); // reflect request origin
     }
     callback(null, false);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-}));
-app.options('*', cors()); // handle preflight requests
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  exposedHeaders: ["Content-Length"]
+};
+
+// Middlewares
+app.use(express.json({ limit: '16kb' }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(cookieParser());
+
+// Apply CORS for normal requests
+app.use(cors(corsOptions));
+// Ensure preflight responses use the same options (no wildcard when credentials)
+app.options('*', cors(corsOptions));
 
 // const allowedOrigins = [
 //   "https://fedkiit.com",
