@@ -1,7 +1,12 @@
-// config/resend.js
-const { Resend } = require('resend');
+/**
+ * RESEND EMAIL CONFIGURATION
+ * This file is kept for backward compatibility but is no longer used.
+ * Email sending is now handled directly in utils/email/nodeMailer.js
+ * 
+ * The Resend clients are initialized directly in nodeMailer.js using:
+ * - RESEND_API_KEY + EMAIL_FROM (primary)
+ * - RESEND_API_KEY_2 + EMAIL_FROM_2 (fallback)
+ */
 
-// Initialize Resend with API key from environment variable
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-module.exports = { resend };
+// This file is deprecated - Resend clients are created in nodeMailer.js
+module.exports = {};
